@@ -70,6 +70,54 @@ describe("GET: /api/articles_id", () => {
   });
 });
 
+describe("GET /api/articles/:article_id/comments", () => {
+  it("200: GET responds with an array of comments for the given article_id", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(2);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            article_id: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+      });
+  });
+  it("200: GET responds with an empty array when queried by an article_id that exists, but no comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+  it("400: GET invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/not-an-id/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  it("404: GET responds with correct error msg for valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/78/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+});
+
 describe("GET: All file paths", () => {
   it("404: GET responds with error message when requested invalid file path", () => {
     return request(app)

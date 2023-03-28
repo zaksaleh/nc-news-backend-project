@@ -6,12 +6,17 @@ const {
   handleCustomErrors,
   handle500,
 } = require("./controllers/errors.controller");
+const {
+  getCommentsByArticleID,
+} = require("./controllers/comments-controller.js");
 
 const app = express();
 
 app.get("/api/topics", getAllTopics);
 
 app.get("/api/articles/:article_id", getArticleId);
+
+app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
 app.use(handlePSQL400s);
 app.use(handleCustomErrors);
