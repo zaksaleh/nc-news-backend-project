@@ -70,6 +70,32 @@ describe("GET: /api/articles_id", () => {
   });
 });
 
+describe("GET: /api/articles", () => {
+  it("200: GET responds with an array of article objects, sorted in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
 describe("GET: All file paths", () => {
   it("404: GET responds with error message when requested invalid file path", () => {
     return request(app)
