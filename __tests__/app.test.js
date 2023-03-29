@@ -154,3 +154,26 @@ describe("GET: All file paths", () => {
       });
   });
 });
+
+/*describe("PATCH: /api/articles/article_id", () => {
+  it("202: PATCH responds with updated article object", () => {
+    const patchUpdate = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/4")
+      .send(patchUpdate)
+      .expect(202)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 4,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 5,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+});*/
