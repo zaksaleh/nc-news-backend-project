@@ -148,7 +148,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   it("201: POST responds with the newly created comment object", () => {
     const newComment = {
       username: "rogersop",
-      body: "somebody somebody somebody somebody",
+      body: "somebodyyyyyyyyyyyyy",
     };
     return request(app)
       .post("/api/articles/5/comments")
@@ -159,7 +159,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         comment.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: 19,
-            body: "somebody somebody somebody somebody",
+            body: "somebodyyyyyyyyyyyyy",
             article_id: 5,
             author: "rogersop",
             votes: expect.any(Number),
@@ -168,6 +168,31 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
+  it("201: POST responds with the newly created comment object, ignoring unnecessary sent properties", () => {
+    const newComment = {
+      username: "icellusedkars",
+      name: "Roger Rog",
+      body: "somebody somebody somebody somebody",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        comment.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: 19,
+            body: "somebody somebody somebody somebody",
+            article_id: 6,
+            author: "icellusedkars",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+      });
+  });
+
   it("400: POST invalid article_id", () => {
     const newComment = {
       username: "rogersop",
