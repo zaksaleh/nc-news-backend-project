@@ -199,7 +199,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       body: "somebody somebody somebody somebody",
     };
     return request(app)
-      .get("/api/articles/not-an-id/comments")
+      .post("/api/articles/not-an-id/comments")
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
@@ -211,22 +211,23 @@ describe("POST /api/articles/:article_id/comments", () => {
       username: "rogersop",
       body: "somebody somebody somebody somebody",
     };
+
     return request(app)
-      .get("/api/articles/67/comments")
+      .post("/api/articles/67/comments")
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("ID not found");
+        expect(body.msg).toBe("Information not found");
       });
   });
-  it("400: POST responds with correct error msg for valid but non-existent username", () => {
+  it("404: POST responds with correct error msg for valid but non-existent username", () => {
     const badComment = { username: "zakkk", body: " something, something" };
     return request(app)
       .post("/api/articles/5/comments")
       .send(badComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid username");
+        expect(body.msg).toBe("Information not found");
       });
   });
   it("400: POST responds with correct error msg for missing comment information", () => {
