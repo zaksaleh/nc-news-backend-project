@@ -11,15 +11,19 @@ const {
 } = require("./controllers/errors.controller");
 const {
   getCommentsByArticleID,
+  postComment,
 } = require("./controllers/comments-controller.js");
 
 const app = express();
+app.use(express.json());
 
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles", getArticlesWithCommentCount);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
+
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.use(handlePSQL400s);
 app.use(handleCustomErrors);

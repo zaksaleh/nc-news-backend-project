@@ -144,6 +144,104 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("POST /api/articles/:article_id/comments", () => {
+  it("201: POST responds with the newly created comment object", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "somebodyyyyyyyyyyyyy",
+    };
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        comment.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: 19,
+            body: "somebodyyyyyyyyyyyyy",
+            article_id: 5,
+            author: "rogersop",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+      });
+  });
+  it("201: POST responds with the newly created comment object, ignoring unnecessary sent properties", () => {
+    const newComment = {
+      username: "icellusedkars",
+      name: "Roger Rog",
+      body: "somebody somebody somebody somebody",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        comment.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: 19,
+            body: "somebody somebody somebody somebody",
+            article_id: 6,
+            author: "icellusedkars",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+      });
+  });
+
+  it("400: POST invalid article_id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "somebody somebody somebody somebody",
+    };
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  it("404: POST responds with correct error msg for valid but non-existent id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "somebody somebody somebody somebody",
+    };
+
+    return request(app)
+      .post("/api/articles/67/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Information not found");
+      });
+  });
+  it("404: POST responds with correct error msg for valid but non-existent username", () => {
+    const badComment = { username: "zakkk", body: " something, something" };
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(badComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Information not found");
+      });
+  });
+  it("400: POST responds with correct error msg for missing comment information", () => {
+    const badComment = {};
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(badComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid request: missing information");
+      });
+  });
+});
+
 describe("GET: All file paths", () => {
   it("404: GET responds with error message when requested invalid file path", () => {
     return request(app)
