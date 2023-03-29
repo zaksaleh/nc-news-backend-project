@@ -1,6 +1,10 @@
 exports.handlePSQL400s = (err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ msg: "Bad Request" });
+  } else if (err.code === "23503") {
+    res.status(400).send({ msg: "Invalid username" });
+  } else if (err.code === "23502") {
+    res.status(400).send({ msg: "Invalid request: missing information" });
   } else {
     next(err);
   }
