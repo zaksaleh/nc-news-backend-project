@@ -203,7 +203,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid information request");
       });
   });
   it("404: POST responds with correct error msg for valid but non-existent id", () => {
