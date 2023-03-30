@@ -3,6 +3,7 @@ const { getAllTopics } = require("./controllers/topics-controller");
 const {
   getArticleId,
   getArticlesWithCommentCount,
+  patchArticleWithID,
 } = require("./controllers/articles-controller");
 const {
   handlePSQL400s,
@@ -23,7 +24,11 @@ app.get("/api/articles", getArticlesWithCommentCount);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
+
+app.patch("/api/articles/:article_id", patchArticleWithID);
+
 app.post("/api/articles/:article_id/comments", postComment);
+
 
 app.use(handlePSQL400s);
 app.use(handleCustomErrors);

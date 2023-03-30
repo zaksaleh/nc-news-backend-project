@@ -83,7 +83,7 @@ describe("GET: /api/articles_id", () => {
       .get("/api/articles/not-an-id")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid information request");
       });
   });
   it("404: GET responds with correct error msg for valid but non-existent id", () => {
@@ -131,7 +131,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/not-an-id/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid information request");
       });
   });
   it("404: GET responds with correct error msg for valid but non-existent id", () => {
@@ -249,6 +249,91 @@ describe("GET: All file paths", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid file path!");
+      });
+  });
+});
+
+describe("PATCH: /api/articles/article_id", () => {
+  it("200: PATCH responds with updated article object for positive integer", () => {
+    const patchUpdate = { inc_votes: 50 };
+    return request(app)
+      .patch("/api/articles/4")
+      .send(patchUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 4,
+          title: "Student SUES Mitch!",
+          topic: "mitch",
+          author: "rogersop",
+          body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+          created_at: expect.any(String),
+          votes: 50,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  it("200: PATCH responds with updated article object for negative integer", () => {
+    const patchUpdate = { inc_votes: -250 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: -150,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  it("400: PATCH responds with correct error message for invalid article_id", () => {
+    const patchUpdate = { inc_votes: 250 };
+    return request(app)
+      .patch("/api/articles/not-an-id")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
+  it("404: PATCH responds with correct error msg for valid but non-existent id", () => {
+    const patchUpdate = { inc_votes: 250 };
+    return request(app)
+      .patch("/api/articles/86")
+      .send(patchUpdate)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article assigned to ID");
+      });
+  });
+  it("400: PATCH responds with correct error message for missing votes information", () => {
+    const patchUpdate = {};
+    return request(app)
+      .patch("/api/articles/5")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
+  it("400: PATCH responds with correct error message for invalid votes information", () => {
+    const patchUpdate = { inc_votes: "WOOP WOOP" };
+    return request(app)
+      .patch("/api/articles/5")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
       });
   });
 });
