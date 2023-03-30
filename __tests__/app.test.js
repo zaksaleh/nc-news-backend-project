@@ -337,3 +337,25 @@ describe("PATCH: /api/articles/article_id", () => {
       });
   });
 });
+
+describe("DELETE: /api/comments/:comment_id", () => {
+  it("204: DELETE responds with a status code 204 no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  it("400: DELETE responds with correct error msg for invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/not-an-id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
+  it("404: DELETE responds with correct error msg for valid but non-existent id", () => {
+    return request(app)
+      .delete("/api/comments/89")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+});
