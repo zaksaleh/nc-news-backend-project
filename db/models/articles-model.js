@@ -28,3 +28,25 @@ exports.fetchArticlesWithCommentCount = () => {
       return result.rows;
     });
 };
+
+exports.updateArticleWithID = (article_id, inc_votes) => {
+  return db
+    .query(
+      `SELECT article_id, votes FROM articles
+     WHERE article_id = $1`,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      const voteCount = rows[0].votes + inc_votes;
+      return db.query(
+        `UPDATE articles
+      SET votes = $1
+      WHERE article_id = $2
+      RETURNING*;`,
+        [voteCount, article_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

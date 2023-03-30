@@ -155,25 +155,48 @@ describe("GET: All file paths", () => {
   });
 });
 
-/*describe("PATCH: /api/articles/article_id", () => {
-  it("202: PATCH responds with updated article object", () => {
-    const patchUpdate = { inc_votes: 5 };
+describe.only("PATCH: /api/articles/article_id", () => {
+  it("200: PATCH responds with updated article object for positive integer", () => {
+    const patchUpdate = { inc_votes: 50 };
     return request(app)
       .patch("/api/articles/4")
       .send(patchUpdate)
-      .expect(202)
+      .expect(200)
       .then(({ body }) => {
         const { article } = body;
         expect(article).toMatchObject({
           article_id: 4,
-          title: expect.any(String),
-          topic: expect.any(String),
-          author: expect.any(String),
-          body: expect.any(String),
+          title: "Student SUES Mitch!",
+          topic: "mitch",
+          author: "rogersop",
+          body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
           created_at: expect.any(String),
-          votes: 5,
-          article_img_url: expect.any(String),
+          votes: 50,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
       });
   });
-});*/
+  it("200: PATCH responds with updated article object for negative integer", () => {
+    const patchUpdate = { inc_votes: -250 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: -150,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  //it("400L PATCH responds with ");
+});
