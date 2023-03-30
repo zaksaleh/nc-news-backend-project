@@ -336,7 +336,7 @@ describe("PATCH: /api/articles/article_id", () => {
         expect(body.msg).toBe("Invalid information request");
       });
   });
-  describe.only("GET: /api/users", () => {
+  describe("GET: /api/users", () => {
     it("200: GET responds with an array of user objects ", () => {
       return request(app)
         .get("/api/users")
