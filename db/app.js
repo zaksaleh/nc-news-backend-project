@@ -24,11 +24,9 @@ app.get("/api/articles", getArticlesWithCommentCount);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
-
 app.patch("/api/articles/:article_id", patchArticleWithID);
 
 app.post("/api/articles/:article_id/comments", postComment);
-
 
 app.use(handlePSQL400s);
 app.use(handleCustomErrors);
@@ -38,4 +36,4 @@ app.all("*", (req, res) => {
   res.status(404).send({ msg: "Invalid file path!" });
 });
 
-module.exports = { app };
+module.exports = app;
