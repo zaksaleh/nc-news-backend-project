@@ -83,7 +83,7 @@ describe("GET: /api/articles_id", () => {
       .get("/api/articles/not-an-id")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid information request");
       });
   });
   it("404: GET responds with correct error msg for valid but non-existent id", () => {
@@ -131,7 +131,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/not-an-id/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid information request");
       });
   });
   it("404: GET responds with correct error msg for valid but non-existent id", () => {
@@ -198,14 +198,14 @@ describe.only("PATCH: /api/articles/article_id", () => {
         });
       });
   });
-  it("400: PATCH invalid article_id", () => {
+  it("400: PATCH responds with correct error message for invalid article_id", () => {
     const patchUpdate = { inc_votes: 250 };
     return request(app)
       .patch("/api/articles/not-an-id")
       .send(patchUpdate)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid information request");
       });
   });
   it("404: PATCH responds with correct error msg for valid but non-existent id", () => {
@@ -218,5 +218,24 @@ describe.only("PATCH: /api/articles/article_id", () => {
         expect(body.msg).toBe("No article assigned to ID");
       });
   });
-  //it("400: PATCH responds with correct error message for missing comment information",);
+  it("400: PATCH responds with correct error message for missing votes information", () => {
+    const patchUpdate = {};
+    return request(app)
+      .patch("/api/articles/5")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
+  it("400: PATCH responds with correct error message for invalid votes information", () => {
+    const patchUpdate = { inc_votes: "WOOP WOOP" };
+    return request(app)
+      .patch("/api/articles/5")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
 });
