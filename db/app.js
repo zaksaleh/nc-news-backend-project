@@ -12,6 +12,7 @@ const {
 } = require("./controllers/errors.controller");
 const {
   getCommentsByArticleID,
+  postComment,
 } = require("./controllers/comments-controller.js");
 
 const app = express();
@@ -23,7 +24,11 @@ app.get("/api/articles", getArticlesWithCommentCount);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
+
 app.patch("/api/articles/:article_id", patchArticleWithID);
+
+app.post("/api/articles/:article_id/comments", postComment);
+
 
 app.use(handlePSQL400s);
 app.use(handleCustomErrors);
