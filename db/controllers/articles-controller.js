@@ -22,10 +22,14 @@ exports.getArticlesWithCommentCount = (req, res, next) => {
   });
 };
 
-exports.patchArticleWithID = (req, res) => {
+exports.patchArticleWithID = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  updateArticleWithID(article_id, inc_votes).then((article) => {
-    res.status(200).send({ article });
-  });
+  updateArticleWithID(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

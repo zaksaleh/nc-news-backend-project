@@ -198,5 +198,25 @@ describe.only("PATCH: /api/articles/article_id", () => {
         });
       });
   });
-  //it("400L PATCH responds with ");
+  it("400: PATCH invalid article_id", () => {
+    const patchUpdate = { inc_votes: 250 };
+    return request(app)
+      .patch("/api/articles/not-an-id")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  it("404: PATCH responds with correct error msg for valid but non-existent id", () => {
+    const patchUpdate = { inc_votes: 250 };
+    return request(app)
+      .patch("/api/articles/86")
+      .send(patchUpdate)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article assigned to ID");
+      });
+  });
+  //it("400: PATCH responds with correct error message for missing comment information",);
 });
