@@ -155,7 +155,7 @@ describe("GET: All file paths", () => {
   });
 });
 
-describe.only("PATCH: /api/articles/article_id", () => {
+describe("PATCH: /api/articles/article_id", () => {
   it("200: PATCH responds with updated article object for positive integer", () => {
     const patchUpdate = { inc_votes: 50 };
     return request(app)
