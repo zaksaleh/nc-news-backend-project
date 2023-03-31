@@ -402,7 +402,7 @@ describe("DELETE: /api/comments/:comment_id", () => {
     });
     it("200: GET responds with all articles if topic is omitted", () => {
       return request(app)
-        .get("/api/articles?topic")
+        .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
@@ -422,12 +422,20 @@ describe("DELETE: /api/comments/:comment_id", () => {
           });
         });
     });
-    it("404: GET responds with correct error msg for valid but non-existent topic", () => {
+    it("200: GET responds with empty array for valid topic with no articles", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toEqual([]);
+        });
+    });
+    it("400: GET responds with correct error msg for valid but non-existent topic", () => {
       return request(app)
         .get("/api/articles?topic=lizardpeople")
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Query does not exist");
+          expect(body.msg).toBe("Topic does not exist");
         });
     });
     it("200: GET responds with an array of articles sorted by its default as created_at", () => {
@@ -522,10 +530,10 @@ describe("DELETE: /api/comments/:comment_id", () => {
           });
         });
     });
-    it("404: GET responds with a correct error message for an invalid sort_by query", () => {
+    it("400: GET responds with a correct error message for an invalid sort_by query", () => {
       return request(app)
         .get("/api/articles?sort_by=authoor")
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Invalid sort query");
         });
@@ -576,10 +584,10 @@ describe("DELETE: /api/comments/:comment_id", () => {
           });
         });
     });
-    it("404: GET responds with a correct error msg for an invalid order query", () => {
+    it("400: GET responds with a correct error msg for an invalid order query", () => {
       return request(app)
         .get("/api/articles?order=deesc")
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Invalid order query");
         });

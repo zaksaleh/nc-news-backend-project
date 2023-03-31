@@ -26,11 +26,11 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
       "article_img_url",
     ].includes(sort_by)
   ) {
-    return Promise.reject({ status: 404, msg: "Invalid sort query" });
+    return Promise.reject({ status: 400, msg: "Invalid sort query" });
   }
 
   if (!["desc", "asc"].includes(order)) {
-    return Promise.reject({ status: 404, msg: "Invalid order query" });
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
   }
 
   let articlesQueryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id)::INT AS comment_count 
@@ -42,16 +42,23 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
     articlesQueryString += ` WHERE articles.topic = $1`;
     queryParams.push(topic);
   }
-
   articlesQueryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
 
   return db.query(articlesQueryString, queryParams).then((result) => {
-    if (result.rowCount === 0) {
-      return Promise.reject({ status: 404, msg: "Query does not exist" });
-    } else {
-      return result.rows;
-    }
+    return result.rows;
   });
+};
+
+exports.checkTopicExists = (topic) => {
+  if (typeof topic === "string") {
+    return db
+      .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+      .then((result) => {
+        if (result.rowCount === 0) {
+          return Promise.reject({ status: 400, msg: "Topic does not exist" });
+        }
+      });
+  }
 };
 
 exports.updateArticleWithID = (article_id, inc_votes) => {
