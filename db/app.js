@@ -2,8 +2,8 @@ const express = require("express");
 const { getAllTopics } = require("./controllers/topics-controller");
 const {
   getArticleId,
-  getArticlesWithCommentCount,
   patchArticleWithID,
+  getArticles,
 } = require("./controllers/articles-controller");
 const {
   handlePSQL400s,
@@ -22,7 +22,7 @@ app.use(express.json());
 
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleId);
-app.get("/api/articles", getArticlesWithCommentCount);
+app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
 app.get("/api/users", getAllUsers);
