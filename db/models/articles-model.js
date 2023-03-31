@@ -1,7 +1,5 @@
 const db = require("../connection");
-const {
-  getArticlesWithCommentCount,
-} = require("../controllers/articles-controller");
+const { getArticles } = require("../controllers/articles-controller");
 
 exports.fetchArticleId = (article_id) => {
   return db
@@ -15,18 +13,45 @@ exports.fetchArticleId = (article_id) => {
     });
 };
 
-exports.fetchArticlesWithCommentCount = () => {
-  return db
-    .query(
-      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
-      FROM articles 
-      LEFT JOIN comments ON comments.article_id = articles.article_id
-      GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC`
-    )
-    .then((result) => {
+exports.fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
+  if (
+    ![
+      "created_at",
+      "votes",
+      "article_id",
+      "comment_count",
+      "title",
+      "topic",
+      "author",
+      "article_img_url",
+    ].includes(sort_by)
+  ) {
+    return Promise.reject({ status: 404, msg: "Invalid sort query" });
+  }
+
+  if (!["desc", "asc"].includes(order)) {
+    return Promise.reject({ status: 404, msg: "Invalid order query" });
+  }
+
+  let articlesQueryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id)::INT AS comment_count 
+  FROM articles 
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
+  const queryParams = [];
+
+  if (topic) {
+    articlesQueryString += ` WHERE articles.topic = $1`;
+    queryParams.push(topic);
+  }
+
+  articlesQueryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+
+  return db.query(articlesQueryString, queryParams).then((result) => {
+    if (result.rowCount === 0) {
+      return Promise.reject({ status: 404, msg: "Query does not exist" });
+    } else {
       return result.rows;
-    });
+    }
+  });
 };
 
 exports.updateArticleWithID = (article_id, inc_votes) => {

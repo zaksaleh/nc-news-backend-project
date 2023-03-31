@@ -1,7 +1,8 @@
 const {
   fetchArticleId,
-  fetchArticlesWithCommentCount,
+  fetchArticles,
   updateArticleWithID,
+  fetchArticlesQueries,
 } = require("../models/articles-model.js");
 
 exports.getArticleId = (req, res, next) => {
@@ -16,10 +17,17 @@ exports.getArticleId = (req, res, next) => {
     });
 };
 
-exports.getArticlesWithCommentCount = (req, res, next) => {
-  fetchArticlesWithCommentCount().then((articles) => {
-    res.status(200).send({ articles });
-  });
+exports.getArticles = (req, res, next) => {
+  const { topic } = req.query;
+  const { sort_by } = req.query;
+  const { order } = req.query;
+  fetchArticles(topic, sort_by, order)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.patchArticleWithID = (req, res, next) => {
