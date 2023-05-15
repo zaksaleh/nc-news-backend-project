@@ -4,6 +4,17 @@
 
 https://saleh-nc-news.onrender.com
 
+Endpoints:
+
+- GET /api/articles
+- GET /api/users
+- GET /api/topics
+- GET /api/articles/:articles_id
+- GET /api/articles/:articles_id/comments
+- POST /api/articles/:article_id/comments
+- PATCH /api/articles/:article_id
+- DELETE /api/comments/:comment_id
+
 ## Introduction
 
 Welcome to my NC-News repo! This project was undertaken to apply what I've learnt about backend development to create a RESTful API utilising node.js, Express, SQL & Test Driven Development. Using CRUD operations, it contains various endpoints that when used in collaboration with the front end React project, designs what can be described as a Reddit clone, that allows users to GET all articles, POST & update (PATCH) comments on those articles, and DELETE comments as they wish.
