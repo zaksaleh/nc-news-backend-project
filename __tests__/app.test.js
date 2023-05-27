@@ -357,6 +357,39 @@ describe("PATCH: /api/articles/article_id", () => {
   });
 });
 
+describe("GET: /api/users/:username", () => {
+  it("200: GET responds with a username specific object, based on the username called", () => {
+    return request(app)
+      .get("/api/users/rogersop")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toMatchObject({
+          username: "rogersop",
+          name: "paul",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        });
+      });
+  });
+  it("404: GET responds with error message when give a false username", () => {
+    return request(app)
+      .get("/api/users/notanamelol")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Username");
+      });
+  });
+  it("404: GET responds with error message when username capitalized", () => {
+    return request(app)
+      .get("/api/users/Rogersop")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Username");
+      });
+  });
+});
+
 describe("DELETE: /api/comments/:comment_id", () => {
   it("204: DELETE responds with a status code 204 no content", () => {
     return request(app).delete("/api/comments/1").expect(204);

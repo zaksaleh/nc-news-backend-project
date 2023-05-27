@@ -15,7 +15,7 @@ const {
   postComment,
   deleteComment,
 } = require("./controllers/comments-controller.js");
-const { getAllUsers } = require("./controllers/users.controller");
+const { getAllUsers, getUsername } = require("./controllers/users.controller");
 
 const cors = require("cors");
 
@@ -29,6 +29,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
 app.get("/api/users", getAllUsers);
+app.get("/api/users/:username", getUsername);
 
 app.patch("/api/articles/:article_id", patchArticleWithID);
 
