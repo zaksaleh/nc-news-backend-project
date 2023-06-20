@@ -89,3 +89,36 @@ exports.updateArticleWithID = (article_id, inc_votes) => {
       return rows[0];
     });
 };
+
+exports.addNewArticle = (title, topic, author, body, article_img_url) => {
+  if (
+    title === undefined ||
+    title.length === 0 ||
+    topic === undefined ||
+    topic.length === 0 ||
+    body === undefined ||
+    body.length === 0 ||
+    author === undefined ||
+    author.length === 0
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid information inputted" });
+  }
+
+  return db
+    .query(
+      `INSERT INTO articles
+  (title, topic, author, body, article_img_url)
+  VALUES
+  ($1, $2, $3, $4, $5)
+  RETURNING *;`,
+      [title, topic, author, body, article_img_url]
+    )
+    .then(({ rows }) => {
+      const articleId = rows[0].article_id;
+      const article = exports.fetchArticleId(articleId);
+      return article;
+    })
+    .then((article) => {
+      return article[0];
+    });
+};

@@ -738,3 +738,82 @@ describe("PATCH: /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  it("201: POST responds with the newly created article object", () => {
+    const newArticle = {
+      title: "YA YA YA YA YAAA",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 13,
+          title: "YA YA YA YA YAAA",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 0,
+        });
+      });
+  });
+  it("400: POST responds with correct error msg for missing object data", () => {
+    const newArticle = {
+      title: "YA YA YA YA YAAA",
+      topic: "",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      article_img_url: "",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information inputted");
+      });
+  });
+  it("400: POST responds with correct error msg for missing object data", () => {
+    const newArticle = {
+      title: "YA YA YA YA YAAA",
+      topic: "",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      article_img_url: "",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information inputted");
+      });
+  });
+  it("400: POST responds with correct error msg for missing keys on object", () => {
+    const newArticle = {
+      title: "YA YA YA YA YAAA",
+
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information inputted");
+      });
+  });
+});

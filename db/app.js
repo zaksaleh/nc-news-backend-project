@@ -4,6 +4,7 @@ const {
   getArticleId,
   patchArticleWithID,
   getArticles,
+  postArticle,
 } = require("./controllers/articles-controller");
 const {
   handlePSQL400s,
@@ -36,6 +37,7 @@ app.patch("/api/articles/:article_id", patchArticleWithID);
 app.patch("/api/comments/:comment_id", patchCommentById);
 
 app.post("/api/articles/:article_id/comments", postComment);
+app.post("/api/articles", postArticle);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
