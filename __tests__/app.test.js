@@ -651,3 +651,90 @@ describe("DELETE: /api/comments/:comment_id", () => {
     });
   });
 });
+
+describe("PATCH: /api/comments/:comment_id", () => {
+  it("200: PATCH increments comment object - correctly returns updated comment", () => {
+    const patchUpdate = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/5")
+      .send(patchUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 5,
+          body: "I hate streaming noses",
+          votes: 1,
+          author: "icellusedkars",
+          article_id: 1,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("200: PATCH decrements comment object - correctly returns updated comment", () => {
+    const patchUpdate = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patchUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 15,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("200: PATCH returns unchanged comment object when patch object data missing", () => {
+    const patchUpdate = { inc_votes: "" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patchUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 16,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("400: PATCH responds with correct error message for invalid data type on patch object", () => {
+    const patchUpdate = { inc_votes: "two fiddy" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
+  it("400: PATCH responds with correct error message for missing votes information", () => {
+    const patchUpdate = {};
+    return request(app)
+      .patch("/api/comments/5")
+      .send(patchUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information request");
+      });
+  });
+  it("404: PATCH responds with correct error msg for valid but non-existent id", () => {
+    const patchUpdate = { inc_votes: 250 };
+    return request(app)
+      .patch("/api/comments/86")
+      .send(patchUpdate)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comment assigned to ID");
+      });
+  });
+});
