@@ -3,6 +3,7 @@ const {
   checkArticleExists,
   insertComment,
   removeComment,
+  updateCommentById,
 } = require("../models/comments-model");
 
 exports.getCommentsByArticleID = (req, res, next) => {
@@ -27,6 +28,18 @@ exports.postComment = (req, res, next) => {
   insertComment(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+  updateCommentById(comment_id, inc_votes)
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch((err) => {
       next(err);

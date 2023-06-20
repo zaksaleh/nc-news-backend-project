@@ -47,3 +47,27 @@ exports.removeComment = (comment_id) => {
       }
     });
 };
+
+exports.updateCommentById = (comment_id, inc_votes) => {
+  return db
+    .query(`SELECT comment_id, votes FROM comments WHERE comment_id = $1`, [
+      comment_id,
+    ])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "No comment assigned to ID",
+        });
+      } else {
+        const voteCount = rows[0].votes + inc_votes;
+        return db.query(
+          `UPDATE comments SET votes = $1 WHERE comment_id = $2 RETURNING*;`,
+          [voteCount, comment_id]
+        );
+      }
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
