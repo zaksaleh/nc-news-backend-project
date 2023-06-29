@@ -29,7 +29,6 @@ exports.addNewTopic = (slug, description, reqLength) => {
       [slug, description]
     )
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     });
 };
