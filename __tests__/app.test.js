@@ -817,3 +817,63 @@ describe("POST /api/articles", () => {
       });
   });
 });
+
+describe("200: POST /api/topics", () => {
+  it("201: POST responds with newly create topic object", () => {
+    const input = {
+      slug: "newww topic",
+      description: "lots of stuff yes yes",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(input)
+      .expect(201)
+      .then(({ body }) => {
+        const { topic } = body;
+        expect(topic).toMatchObject({
+          slug: "newww topic",
+          description: "lots of stuff yes yes",
+        });
+      });
+  });
+  it("400: POST responds with correct error msg for missing object data", () => {
+    const input = {
+      slug: "",
+      description: "lots of stuff yes yes",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information inputted");
+      });
+  });
+  it("400: POST responds with correct error msg for extra object data", () => {
+    const input = {
+      slug: "",
+      description: "lots of stuff yes yes",
+      extra: "extra data",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information inputted");
+      });
+  });
+  it("400: POST responds with correct error msg for invalid object data", () => {
+    const input = {
+      slug: "",
+      description: 172381318,
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid information inputted");
+      });
+  });
+});

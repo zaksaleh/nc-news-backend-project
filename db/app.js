@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllTopics } = require("./controllers/topics-controller");
+const { getAllTopics, postTopic } = require("./controllers/topics-controller");
 const {
   getArticleId,
   patchArticleWithID,
@@ -38,6 +38,7 @@ app.patch("/api/comments/:comment_id", patchCommentById);
 
 app.post("/api/articles/:article_id/comments", postComment);
 app.post("/api/articles", postArticle);
+app.post("/api/topics", postTopic);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
